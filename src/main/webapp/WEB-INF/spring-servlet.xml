@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans
+ https://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+ https://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/tx
+ https://www.springframework.org/schema/tx/spring-tx.xsd
+ ">
+ 
+  <tx:annotation-driven proxy-target-class="true"
+		transaction-manager="transactionManager" />
+ 
+ <context:component-scan base-package="com.product"></context:component-scan>
+ 
+ <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" name="viewReslover">
+ <property name="prefix" value="/WEB-INF/views/"></property>
+ <property name="suffix" value=".jsp"></property>
+ </bean>
+ 
+   <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" name="ds">
+ <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />  
+<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />  
+<property name="username" value="system" />  
+<property name="password" value="root" />  
+ 
+ </bean>
+ 
+  <bean
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		name="factory">
+		<!-- dataSource -->
+		<property name="dataSource" ref="ds"></property>
+		<!-- hibernateProperties -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+		<!-- annotatedClasses -->
+		<property name="annotatedClasses">
+			<list>
+				<value>com.product.model.Product</value>
+				<value>com.product.model.Registration</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean class="org.springframework.orm.hibernate5.HibernateTemplate"
+		name="hibernateTemplate">
+		<property name="sessionFactory" ref="factory"></property>
+	</bean>
+	
+	<bean
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+		name="transactionManager">
+		<property name="sessionFactory" ref="factory"></property>
+	</bean>
+ 
+ </beans>
